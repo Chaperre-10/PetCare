@@ -19,6 +19,12 @@ function showToast(message) {
   toast.classList.add('show');
   window.setTimeout(() => toast.classList.remove('show'), 2800);
 }
+function updateCounts(result) {
+  document.querySelector('[data-filter="today"] span').textContent = result.today_count;
+  document.querySelector('[data-filter="tomorrow"] span').textContent = result.tomorrow_count;
+  document.querySelector('[data-filter="week"] span').textContent = result.week_count;
+  document.querySelector('.stat-card.coral>strong').textContent = result.today_count;
+}
 
 document.querySelector('#openModal').addEventListener('click', showModal);
 document.querySelector('#emptyAction').addEventListener('click', showModal);
@@ -40,25 +46,17 @@ document.querySelector('#appointmentForm').addEventListener('submit', async (eve
   appointmentList.prepend(item);
   updateCounts(result);
   event.currentTarget.reset();
+  dateInput.value = new Date().toISOString().slice(0, 10);
   hideModal();
   showToast('Cita registrada correctamente');
 });
-
-function updateCounts(result) {
-  document.querySelector('[data-filter="today"] span').textContent = result.today_count;
-  document.querySelector('[data-filter="tomorrow"] span').textContent = result.tomorrow_count;
-  document.querySelector('[data-filter="week"] span').textContent = result.week_count;
-  document.querySelector('.stat-card.coral>strong').textContent = result.today_count;
-}
 
 document.querySelectorAll('.filter-tab').forEach((tab) => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.filter-tab').forEach((item) => item.classList.remove('active'));
     tab.classList.add('active');
     const filter = tab.dataset.filter;
-    document.querySelectorAll('.appointment-item').forEach((item) => {
-      item.hidden = filter === 'week' ? false : item.dataset.day !== filter;
-    });
+    document.querySelectorAll('.appointment-item').forEach((item) => { item.hidden = filter === 'week' ? false : item.dataset.day !== filter; });
   });
 });
 
@@ -76,21 +74,13 @@ document.querySelectorAll('.nav-item').forEach((item) => {
   });
 });
 
-document.querySelector('#viewAgenda').addEventListener('click', () => {
-  document.querySelector('[data-view="Agenda"]').click();
-});
-document.querySelector('#addPet').addEventListener('click', () => {
-  document.querySelector('[data-view="Mascotas"]').click();
-  showToast('Sección de mascotas abierta');
-});
+document.querySelector('#viewAgenda').addEventListener('click', () => document.querySelector('[data-view="Agenda"]').click());
+document.querySelector('#addPet').addEventListener('click', () => { document.querySelector('[data-view="Mascotas"]').click(); showToast('Sección de mascotas abierta'); });
 document.querySelectorAll('.task-list input').forEach((input) => input.addEventListener('change', () => showToast(input.checked ? 'Tarea completada' : 'Tarea reabierta')));
-
 document.querySelector('.clinic-switcher .icon-button').addEventListener('click', () => showToast('Clínica Vida & Cola seleccionada'));
 document.querySelector('.notification').addEventListener('click', () => showToast('No tienes notificaciones nuevas'));
 document.querySelector('.round-arrow').addEventListener('click', () => document.querySelector('[data-view="Mascotas"]').click());
 document.querySelector('.select-button').addEventListener('click', () => showToast('Mostrando actividad de junio de 2025'));
 document.querySelector('.task-button').addEventListener('click', () => document.querySelector('.task-panel').scrollIntoView({ behavior: 'smooth', block: 'center' }));
 document.querySelectorAll('.more-button').forEach((button) => button.addEventListener('click', () => showToast('Opciones de cita disponibles próximamente')));
-appointmentList.addEventListener('click', (event) => {
-  if (event.target.closest('.more-button')) showToast('Opciones de cita disponibles próximamente');
-});
+appointmentList.addEventListener('click', (event) => { if (event.target.closest('.more-button')) showToast('Opciones de cita disponibles próximamente'); });
