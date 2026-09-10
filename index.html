@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#102a43" />
+  <title>PetCare | Gestión veterinaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div><strong>petcare</strong><span>veterinary studio</span></div>
+      </div>
+      <div class="clinic-switcher">
+        <div class="clinic-avatar">VC</div>
+        <div><strong>Vida & Cola</strong><span>Clínica principal</span></div>
+        <button class="icon-button small" aria-label="Cambiar clínica">⌄</button>
+      </div>
+      <nav class="nav-list">
+        <p class="nav-label">Workspace</p>
+        <button class="nav-item active" data-view="Resumen"><span>▦</span>Resumen</button>
+        <button class="nav-item" data-view="Agenda"><span>◷</span>Agenda <b>{{ week_count }}</b></button>
+        <button class="nav-item" data-view="Mascotas"><span>♡</span>Mascotas</button>
+        <button class="nav-item" data-view="Clientes"><span>♧</span>Clientes</button>
+        <p class="nav-label second">Administración</p>
+        <button class="nav-item" data-view="Historial"><span>↺</span>Historial clínico</button>
+        <button class="nav-item" data-view="Reportes"><span>▥</span>Reportes</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="help-card"><span class="help-icon">?</span><div><strong>¿Necesitas ayuda?</strong><span>Visita nuestro centro de soporte</span></div><span class="arrow">↗</span></div>
+        <a class="user-profile profile-link" href="{{ url_for('perfil') }}"><div class="user-avatar">{{ (user.name if user else 'LM')[:2].upper() }}</div><div><strong>{{ user.name if user else 'Laura Méndez' }}</strong><span>Mi perfil</span></div><span class="profile-arrow">↗</span></a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Mi workspace</span><b>/</b><strong id="currentView">Resumen</strong></div>
+        <div class="top-actions">
+          <button class="icon-button notification" aria-label="Notificaciones"><span></span>♧</button>
+          <div class="top-divider"></div>
+          <div class="date-chip"><span class="calendar-icon">□</span><span>Martes, 24 jun 2025</span></div>
+        </div>
+      </header>
+
+      <section class="content-wrap" id="dashboardView">
+        <div class="welcome-row">
+          <div><p class="eyebrow">{{ today_label if today_label else 'MARTES, 24 DE JUNIO DE 2025' }}</p><h1>Buenos días, {{ user.name.split()[0] if user else 'Laura' }} <span>✦</span></h1><p class="welcome-copy">Aquí tienes lo que está pasando en tu clínica hoy.</p></div>
+          <button class="primary-button" id="openModal"><span>＋</span> Registrar cita</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card coral"><div class="stat-heading"><span>Citas de hoy</span><span class="stat-icon">◷</span></div><strong>{{ today_count }}</strong><div class="stat-meta"><span class="trend-up">Agenda real</span><span>registradas hoy</span></div><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+          <article class="stat-card mint"><div class="stat-heading"><span>Mascotas activas</span><span class="stat-icon">♡</span></div><strong>248</strong><div class="stat-meta"><span class="trend-up">↑ 6.4%</span><span>este mes</span></div><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+          <article class="stat-card yellow"><div class="stat-heading"><span>Ingresos del mes</span><span class="stat-icon">$</span></div><strong>$8,460</strong><div class="stat-meta"><span class="trend-up">↑ 12.2%</span><span>vs. mes pasado</span></div><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+          <article class="stat-card blue"><div class="stat-heading"><span>Recordatorios</span><span class="stat-icon">◇</span></div><strong>8</strong><div class="stat-meta"><span class="trend-neutral">•</span><span>pendientes esta semana</span></div><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel appointments-panel">
+            <div class="panel-header"><div><h2>Próximas citas</h2><p>Tu agenda para hoy y mañana</p></div><button class="text-button" id="viewAgenda">Ver agenda completa <span>→</span></button></div>
+            <div class="appointment-tabs"><button class="filter-tab active" data-filter="today">Hoy <span>{{ today_count }}</span></button><button class="filter-tab" data-filter="tomorrow">Mañana <span>{{ tomorrow_count }}</span></button><button class="filter-tab" data-filter="week">Esta semana <span>{{ week_count }}</span></button></div>
+            <div class="appointment-list" id="appointmentList">
+              {% for appointment in appointments %}<div class="appointment-item" data-day="{{ appointment.day }}"><div class="time-block"><strong>{{ appointment.time }}</strong><span>{{ appointment.duration }}</span></div><div class="pet-avatar {{ appointment.color }}">{{ appointment.pet[0] }}</div><div class="appointment-info"><strong>{{ appointment.pet }} <span class="species">{{ appointment.species }}</span></strong><span>{{ appointment.reason }} <i>•</i> {{ appointment.vet }}</span></div><div class="status-pill {{ 'waiting' if appointment.status == 'Por confirmar' else 'confirmed' }}">{{ appointment.status }}</div><button class="more-button" aria-label="Opciones de cita">•••</button></div>{% endfor %}
+            </div>
+          </section>
+          <section class="panel pets-panel"><div class="panel-header"><div><h2>Mascotas recientes</h2><p>Últimos pacientes registrados</p></div><button class="round-arrow" aria-label="Ver todas las mascotas">→</button></div><div class="pet-list"><div class="pet-row"><div class="pet-avatar large pet-luna">L</div><div><strong>Luna</strong><span>Golden Retriever <b>·</b> 4 años</span></div><span class="pet-arrow">↗</span></div><div class="pet-row"><div class="pet-avatar large pet-milo">M</div><div><strong>Milo</strong><span>Siamés <b>·</b> 2 años</span></div><span class="pet-arrow">↗</span></div><div class="pet-row"><div class="pet-avatar large pet-nala">N</div><div><strong>Nala</strong><span>Border Collie <b>·</b> 6 años</span></div><span class="pet-arrow">↗</span></div><div class="pet-row"><div class="pet-avatar large pet-coco">C</div><div><strong>Coco</strong><span>Cocker Spaniel <b>·</b> 3 años</span></div><span class="pet-arrow">↗</span></div></div><button class="outline-button" id="addPet">＋ Añadir nueva mascota</button></section>
+        </div>
+
+        <div class="bottom-grid"><section class="panel chart-panel"><div class="panel-header"><div><h2>Actividad de la clínica</h2><p>Citas completadas durante el mes</p></div><button class="select-button">Junio 2025 <span>⌄</span></button></div><div class="chart-area"><div class="y-axis"><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div><div class="chart"><div class="grid-line l1"></div><div class="grid-line l2"></div><div class="grid-line l3"></div><div class="grid-line l4"></div><div class="bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:45%"></i><i style="height:68%"></i><i style="height:58%"></i><i style="height:76%"></i><i style="height:62%"></i><i class="highlight" style="height:88%"><b>34</b></i><i style="height:70%"></i><i style="height:78%"></i><i style="height:66%"></i><i style="height:82%"></i></div><div class="x-axis"><span>1 Jun</span><span>5 Jun</span><span>10 Jun</span><span>15 Jun</span><span>20 Jun</span><span>24 Jun</span></div></div></div></section><section class="panel task-panel"><div class="panel-header"><div><h2>Tareas pendientes</h2><p>Lo que necesita tu atención</p></div><span class="task-count">3</span></div><div class="task-list"><label><input type="checkbox" /><span class="custom-check"></span><span>Enviar recordatorio a 8 clientes</span><small>Hoy</small></label><label><input type="checkbox" /><span class="custom-check"></span><span>Revisar resultados de laboratorio</span><small>Hoy</small></label><label><input type="checkbox" /><span class="custom-check"></span><span>Actualizar inventario de vacunas</span><small>Mañana</small></label></div><button class="text-button task-button">Ver todas las tareas <span>→</span></button></section></div>
+      </section>
+
+      <section class="empty-view" id="emptyView" hidden><div class="empty-icon">✦</div><h2 id="emptyTitle">Agenda</h2><p>Esta vista está lista para conectarse con tus datos clínicos.</p><button class="primary-button" id="emptyAction">＋ Registrar cita</button></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="modal-close" id="closeModal" aria-label="Cerrar">×</button><p class="eyebrow">NUEVA ACTIVIDAD</p><h2 id="modalTitle">Registrar una cita</h2><p class="modal-copy">Añade los datos de la próxima visita veterinaria.</p><form id="appointmentForm"><label>Mascota<input name="pet" placeholder="Ej. Luna" required /></label><div class="form-row"><label>Fecha<input type="date" name="date" required /></label><label>Hora<input type="time" name="time" required /></label></div><label>Motivo<select name="reason"><option>Consulta general</option><option>Vacunación</option><option>Control dermatológico</option><option>Seguimiento</option></select></label><button class="primary-button full" type="submit">Guardar cita <span>→</span></button></form></div></div>
+  <div class="toast" id="toast" role="status">Cita registrada correctamente <span>✓</span></div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

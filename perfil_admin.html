@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil administrador | PetCare</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="admin-page">
+  <main class="admin-shell admin-profile-shell">
+    <header class="admin-topbar">
+      <a class="auth-brand" href="{{ url_for('inicio') }}"><span>✦</span> petcare</a>
+      <div class="admin-user"><span>Sesión administrativa</span><strong>{{ admin.name }}</strong><a href="{{ url_for('cerrar_sesion') }}">Salir</a></div>
+    </header>
+    <section class="admin-profile-card">
+      <div class="profile-big-avatar">AP</div>
+      <div class="admin-profile-copy">
+        <p class="eyebrow">PERFIL ADMINISTRADOR</p>
+        <h1>{{ admin.name }}</h1>
+        <p>{{ admin.email }} · Control de agenda y citas</p>
+      </div>
+      <a class="primary-button admin-appointments-link" href="{{ url_for('admin_panel') }}">Ver todas las citas <span>→</span></a>
+    </section>
+    <section class="admin-profile-options">
+      <div class="admin-option-icon">◷</div>
+      <div><h2>Agenda de la clínica</h2><p>Consulta todas las citas, quién asiste y qué mascota tiene cada visita.</p></div>
+      <a class="outline-button" href="{{ url_for('admin_panel') }}">Abrir agenda</a>
+    </section>
+  </main>
+</body>
+</html>

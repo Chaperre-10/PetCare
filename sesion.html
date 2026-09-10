@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Iniciar sesión | PetCare</title><link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="auth-page">
+	<main class="auth-layout login-layout">
+		<section class="auth-intro"><a class="auth-brand" href="{{ url_for('inicio') }}"><span>✦</span> petcare</a><div><p class="eyebrow">TU ESPACIO DE CUIDADO</p><h1>Tu mascota tiene una cita contigo.</h1><p>Consulta sus próximas visitas, mantén su historial al día y acompaña cada etapa de su bienestar.</p></div><div class="pet-orbit"><span>♡</span><b>+248</b><small>mascotas cuidadas</small></div></section>
+		<section class="auth-card login-card"><div class="auth-card-heading"><p class="eyebrow">BIENVENIDO DE VUELTA</p><h2>Inicia sesión</h2><p>Entra a tu perfil para ver las citas de tus mascotas.</p></div>{% if error %}<div class="form-error">{{ error }}</div>{% endif %}<form method="post" class="auth-form"><label>Correo electrónico<input name="email" type="email" placeholder="tu@correo.com" required></label><label>Contraseña<input name="password" type="password" placeholder="Tu contraseña" required></label><button class="primary-button full" type="submit">Entrar a mi perfil <span>→</span></button></form><p class="auth-switch">¿Aún no tienes un perfil? <a href="{{ url_for('registrarse') }}">Regístrate aquí</a></p></section>
+		<p class="auth-switch admin-entry"><a href="{{ url_for('admin_sesion') }}">Acceso para administradores</a></p>
+	</main>
+</body>
+</html>
